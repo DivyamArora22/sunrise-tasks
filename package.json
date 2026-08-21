@@ -1,0 +1,14 @@
+{
+  "name": "sunrise-tasks",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run dev -w @sunrise/web",
+    "dev:web": "npm run dev -w @sunrise/web",
+    "dev:mobile": "npm run start -w @sunrise/mobile",
+    "build": "npm run build -w @sunrise/shared && npm run build -w @sunrise/web",
+    "test": "npm run test -w @sunrise/shared",
+    "typecheck": "npm run typecheck -ws --if-present"
+  }
+}
