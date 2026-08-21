@@ -85,21 +85,12 @@ Apple/Google credentials are intentionally not committed and push cannot be test
 ## Testing and quality checks
 
 ```bash
-npm install
 npm test
 npm run typecheck
 npm run build
 ```
 
 Tests cover creation validation, assignment visibility, cross-employee denial, acknowledgement, starting, completion, overdue calculation, reopening, and invalid workflow transitions. Database access enforcement is additionally encoded in RLS and RPC predicates; run Supabase integration tests against a local instance when extending policies.
-
-### Quick manual test
-
-1. Run `npm run dev:web` and open `http://localhost:3000`.
-2. Create an urgent task and confirm that it appears in the task list and summary counts.
-3. Open the task, then select **ACKNOWLEDGE TASK**, **START TASK**, add an update, and **MARK COMPLETE**.
-4. Confirm that each action appears in the activity timeline and that the completed count changes.
-5. Run `npm run dev:mobile`; verify the same large-button workflow under New, Active, and Completed tasks.
 
 ## Deployment
 
