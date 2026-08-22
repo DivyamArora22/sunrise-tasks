@@ -1,0 +1,21 @@
+{
+  "name": "sunrise-tasks",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run dev -w @sunrise/web",
+    "dev:web": "npm run dev -w @sunrise/web",
+    "dev:mobile": "npm run start -w @sunrise/mobile",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset",
+    "build": "npm run build -w @sunrise/shared && npm run build -w @sunrise/web",
+    "test": "npm run test -w @sunrise/shared",
+    "typecheck": "npm run typecheck -ws --if-present"
+  },
+  "devDependencies": {
+    "supabase": "^2.39.2"
+  }
+}
