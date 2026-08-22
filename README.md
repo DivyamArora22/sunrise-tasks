@@ -23,30 +23,16 @@ supabase       Database migration, seed guidance, and push Edge Function
 
 ### Prerequisites
 
-Install Node.js 20+, npm 10+, Docker Desktop (with Docker running), and—only for native builds—the Expo/EAS CLI. The Supabase CLI is installed as a project development dependency by `npm install`, so a global `supabase` command is not required.
+Install Node.js 20+, npm 10+, Docker, [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started), and (for native builds) the Expo/EAS CLI.
 
 ```bash
 npm install
 cp .env.example .env.local
-npm run db:start
-npm run db:reset
+supabase start
+supabase db reset
 ```
 
-If your shell reports `zsh: command not found: supabase`, do not run `supabase start` directly. From the repository root, run `npm install` and then `npm run db:start` (or `npx supabase start`). If that still fails, confirm Docker Desktop is installed and running, then retry. Avoid `npm install -g supabase`; use the checked-in project dependency so every developer uses a compatible CLI version.
-
-If npm reports an `ERESOLVE` conflict between React 18 and `react-dom` 19, remove the partial install and reinstall. The web and Expo workspaces pin React and `react-dom` to the same compatible version:
-
-```bash
-rm -rf node_modules apps/web/node_modules apps/mobile/node_modules packages/shared/node_modules
-rm -f package-lock.json
-npm cache verify
-npm install
-cd apps/mobile && npx expo install --check && cd ../..
-```
-
-Do not use `--force` or `--legacy-peer-deps`; those options can hide a genuinely incompatible Expo dependency tree.
-
-Copy the local API URL and anon key printed by `npm run db:status` into `.env.local`. For the mobile app, copy the example into `apps/mobile/.env` and use the `EXPO_PUBLIC_*` names. Never expose the service-role key in a browser or mobile environment.
+Copy the local API URL and anon key printed by `supabase status` into `.env.local`. For the mobile app, copy the example into `apps/mobile/.env` and use the `EXPO_PUBLIC_*` names. Never expose the service-role key in a browser or mobile environment.
 
 Run the web experience:
 
@@ -76,7 +62,7 @@ Thereafter, create or invite controlled users from a server-only admin endpoint 
 
 ## Database and security
 
-Apply migrations with `npx supabase db push` for a linked project or `npm run db:reset` locally. The migration stores UTC timestamps, indexes the assignment/due-date paths, and calculates overdue in clients rather than mutating status. RLS permits an active admin to see all work, while employees can only see tasks assigned to them. Security-definer RPCs validate each employee state transition atomically and write history plus owner notifications.
+Apply migrations with `supabase db push` for a linked project or `supabase db reset` locally. The migration stores UTC timestamps, indexes the assignment/due-date paths, and calculates overdue in clients rather than mutating status. RLS permits an active admin to see all work, while employees can only see tasks assigned to them. Security-definer RPCs validate each employee state transition atomically and write history plus owner notifications.
 
 Attachments use the private `task-attachments` bucket, limited to JPEG, PNG, WebP, and PDF files up to 10 MB. Store objects under `<task-uuid>/<random-file-name>` so storage policies can verify task access.
 
@@ -99,21 +85,12 @@ Apple/Google credentials are intentionally not committed and push cannot be test
 ## Testing and quality checks
 
 ```bash
-npm install
 npm test
 npm run typecheck
 npm run build
 ```
 
 Tests cover creation validation, assignment visibility, cross-employee denial, acknowledgement, starting, completion, overdue calculation, reopening, and invalid workflow transitions. Database access enforcement is additionally encoded in RLS and RPC predicates; run Supabase integration tests against a local instance when extending policies.
-
-### Quick manual test
-
-1. Run `npm run dev:web` and open `http://localhost:3000`.
-2. Create an urgent task and confirm that it appears in the task list and summary counts.
-3. Open the task, then select **ACKNOWLEDGE TASK**, **START TASK**, add an update, and **MARK COMPLETE**.
-4. Confirm that each action appears in the activity timeline and that the completed count changes.
-5. Run `npm run dev:mobile`; verify the same large-button workflow under New, Active, and Completed tasks.
 
 ## Deployment
 
